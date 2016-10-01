@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import java.net.URLEncoder;
 
@@ -29,7 +30,7 @@ public class BusClient {
                     public void onCompleted(Exception e, String result) {
                         if(e == null){
 
-                                Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
 
                         }
                         else{
@@ -40,24 +41,27 @@ public class BusClient {
                 });
     }
 
-    public void searchBus(String searchTerms, FutureCallback<String> callback){
+    public void searchBus(String searchTerms, FutureCallback<Response<String>> callback){
         Ion.with(context)
                 .load("GET", (url + "/Linha/Buscar?termosBusca=" + URLEncoder.encode(searchTerms)))
                 .asString()
+                .withResponse()
                 .setCallback(callback);
     }
 
-    public void getStops(int codigoLinha, FutureCallback<String> callback){
+    public void getStops(int codigoLinha, FutureCallback<Response<String>> callback){
         Ion.with(context)
                 .load("GET", url + "/Parada/BuscarParadasPorLinha?codigoLinha=" + codigoLinha)
                 .asString()
+                .withResponse()
                 .setCallback(callback);
     }
 
-    public void getBusPositions(int codigoLinha, FutureCallback<String> callback){
+    public void getBusPositions(int codigoLinha, FutureCallback<Response<String>> callback){
         Ion.with(context)
                 .load("GET", url + "/Posicao?codigoLinha=" + codigoLinha)
                 .asString()
+                .withResponse()
                 .setCallback(callback);
 
     }

@@ -1,8 +1,16 @@
 package br.com.potatotech.contrafluxo;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,6 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +50,14 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            mMap.setMyLocationEnabled(true);
+        }
+        else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+            mMap.setMyLocationEnabled(true);
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.5892118,-46.6142369), 11));
     }
 
@@ -70,11 +87,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     public void updateMapBusLocations(final BusSearchResult busSearchResult) {
         BusClient client = new BusClient(getContext());
-        client.getBusPositions(busSearchResult.getCodigoLinha(), new FutureCallback<String>() {
+        client.getBusPositions(busSearchResult.getCodigoLinha(), new FutureCallback<Response<String>>() {
             @Override
-            public void onCompleted(Exception e, String result) {
-                if (e == null) {
-                    BusLocation busLocations = new Gson().fromJson(result, BusLocation.class);
+            public void onCompleted(Exception e, Response<String> result) {
+                if (e == null && result.getHeaders().code() == 200){
+                    BusLocation busLocations = new Gson().fromJson(result.getResult(), BusLocation.class);
                     mMap.clear();
                     for (BusLocationXY locationXY : busLocations.getVs()) {
                         mMap.addMarker(new MarkerOptions()
@@ -83,6 +100,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 .snippet(busSearchResult.getSentido() == 1 ? busSearchResult.getDenominacaoTPTS() : busSearchResult.getDenominacaoTSTP()));
                     }
 
+
+                }
+                else{
+                    Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -90,11 +112,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     public void updateMapBusLocations(final BusSearchHistory busSearchHistory){
         BusClient client = new BusClient(getContext());
-        client.getBusPositions(busSearchHistory.getCodigoLinha(), new FutureCallback<String>() {
+        client.getBusPositions(busSearchHistory.getCodigoLinha(), new FutureCallback<Response<String>>() {
             @Override
-            public void onCompleted(Exception e, String result) {
-                if(e == null){
-                    BusLocation busLocations = new Gson().fromJson(result, BusLocation.class);
+            public void onCompleted(Exception e, Response<String> result) {
+                if(e == null && result.getHeaders().code() == 200){
+                    BusLocation busLocations = new Gson().fromJson(result.getResult(), BusLocation.class);
                     mMap.clear();
                     for(BusLocationXY locationXY : busLocations.getVs()){
                         mMap.addMarker(new MarkerOptions()
@@ -103,6 +125,10 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                                 .snippet(busSearchHistory.getDenominacao()));
 
                     }
+
+                }
+                else{
+                    Toast.makeText(getContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
 
                 }
             }

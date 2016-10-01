@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -75,17 +76,17 @@ public class BusSearchActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if(s.length() >= 3){
-                client.searchBus(busSearchField.getText().toString(), new FutureCallback<String>() {
+                client.searchBus(busSearchField.getText().toString(), new FutureCallback<Response<String>>() {
                     @Override
-                    public void onCompleted(Exception e, String result) {
-                        if(e == null){
-                            BusSearchResult[] search = new Gson().fromJson(result, BusSearchResult[].class);
+                    public void onCompleted(Exception e, Response<String> result) {
+                        if(e == null && result.getHeaders().code() == 200){
+                            BusSearchResult[] search = new Gson().fromJson(result.getResult(), BusSearchResult[].class);
                             List<BusSearchResult> busList = Arrays.asList(search);
                             BusSearchResultsAdapter adapter = new BusSearchResultsAdapter(BusSearchActivity.this, busList);
                             listViewBusList.setAdapter(adapter);
                         }
                         else{
-                            e.printStackTrace();
+                            Toast.makeText(BusSearchActivity.this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
                         }
                     }
                 });

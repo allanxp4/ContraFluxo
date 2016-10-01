@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 import br.com.potatotech.contrafluxo.Model.BusSearchHistory;
@@ -25,6 +26,7 @@ public class BusHistoryAdapter extends BaseAdapter {
     public BusHistoryAdapter(Context context, List<BusSearchHistory> busSearchHistories){
         this.context = context;
         this.busSearchHistoryList = busSearchHistories;
+        Collections.reverse(this.busSearchHistoryList);
     }
 
     @Override

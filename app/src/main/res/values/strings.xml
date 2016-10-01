@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Contra Fluxo</string>
     <string name="title_activity_maps">Map</string>
+    <string name="no_internet_connection">Sem conexão a internet</string>
 </resources>

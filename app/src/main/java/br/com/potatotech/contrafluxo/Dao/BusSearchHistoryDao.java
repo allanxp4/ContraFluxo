@@ -52,7 +52,7 @@ public class BusSearchHistoryDao extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         List<BusSearchHistory> busSearchHistories = new ArrayList<BusSearchHistory>();
-        Cursor c = db.rawQuery("SELECT * FROM bus_search_history", null);
+        Cursor c = db.rawQuery("SELECT * FROM bus_search_history;", null);
 
         while(c.moveToNext()){
             BusSearchHistory busSearchHistory = new BusSearchHistory();
