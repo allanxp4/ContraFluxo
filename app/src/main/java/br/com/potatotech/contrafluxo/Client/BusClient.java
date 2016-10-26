@@ -72,4 +72,8 @@ public class BusClient {
                 .asString()
                 .setCallback(callback);
     }
+
+    public void getETA(int codigoLinha, int codigoParada, FutureCallback<String> callback){
+
+    }
 }

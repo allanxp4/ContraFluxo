@@ -119,6 +119,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                     BusLocation busLocations = new Gson().fromJson(result.getResult(), BusLocation.class);
                     mMap.clear();
                     for(BusLocationXY locationXY : busLocations.getVs()){
+
+
                         mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(locationXY.getPy(), locationXY.getPx()))
                                 .title(busSearchHistory.getLetreiro())
